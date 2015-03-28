@@ -58,7 +58,9 @@ def recommend(rating_file, to_be_rated_file, r, mu, lam):
 
         new_Y = Y + gamma2*(numpy.matlib.repmat(np.dot(er, (V / math.sqrt(np.count_nonzero(Nu > 0)))),N,M,N,r)-lambda7*Y)
 
-        new_W = W + gamma3*()
+        new_W = W + gamma3*(np.dot(er.T,np.multiply((R - baseline),(R>0))) / math.sqrt(np.count_nonzero(R > 0)) - lambda8*W)
+
+        new_C = C + gamma3*()
 
 
 
