@@ -24,6 +24,13 @@ def recommend(rating_file, to_be_rated_file, r, mu, lam):
     steps = 500
     limit = 10^-5
 
+    gamma1 = 0.007
+    gamma2 = 0.007
+    gamma3 = 0.001
+    lambda6 = 0.005
+    lambda7 = 0.015
+    lambda8 = 0.015
+
     b_u = np.random.rand(N,1)
     b_m = np.random.rand(M,1)
     U = np.random.rand(N,r)
@@ -42,9 +49,12 @@ def recommend(rating_file, to_be_rated_file, r, mu, lam):
 
     for step in xrange(steps):
         print "Iteration Number: " + str(step)
-        new_b_u = b_u + gamma1*((np.multiply((pred_rating - R),(R > 0))).sum(axis=1) - lambda6*b_u)  
-        new_b_m = b_m + gamma1*((np.multiply((pred_rating - R),(R > 0))).sum(axis=1) - lambda6*b_m) 
-        
+        er = np.multiply((pred_rating - R),(R > 0))
+        new_b_u = b_u + gamma1*(er.sum(axis=1) - lambda6*b_u)  
+        new_b_m = b_m + gamma1*(er.sum(axis=0) - lambda6*b_m) 
+
+        new_V = V + gamma2*(np.dot(er.T,(U+(Y[Nu>0].sum(axis=0)))) - lambda7*V)
+
 
 
 
