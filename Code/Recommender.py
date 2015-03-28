@@ -56,11 +56,13 @@ def recommend(rating_file, to_be_rated_file, r, mu, lam):
         new_V = V + gamma2*(np.dot(er.T,(U+((Y[Nu>0].sum(axis=0)) / math.sqrt(np.count_nonzero(Nu > 0))))) - lambda7*V)
         new_U = U + gamma2*(np.dot(er,V) - lambda7*U)
 
-        new_Y = Y + gamma2*(numpy.matlib.repmat(np.dot(er, (V / math.sqrt(np.count_nonzero(Nu > 0)))),N,M,1,1)-lambda7*Y)
+        new_Y = Y + gamma2*((np.dot(er, (V / math.sqrt(np.count_nonzero(Nu > 0))))).reshape(1,N,r).repeat(M,0).reshape(1,M,N,r).repeat(N,0) - lambda7*Y)
+        #new_Y = Y + gamma2*(numpy.matlib.repmat(np.dot(er, (V / math.sqrt(np.count_nonzero(Nu > 0)))),N,M,1,1)-lambda7*Y)
 
         new_W = W + gamma3*(np.dot(er.T,np.multiply((R - baseline),(R>0))) / math.sqrt(np.count_nonzero(R > 0)) - lambda8*W)
 
-        new_C = C + gamma3*(numpy.matlib.repmat(er/math.sqrt(np.count_nonzero(Nu > 0)),N,M,1,1) - lambda8*C)
+        new_C = C + gamma3*((er/math.sqrt(np.count_nonzero(Nu > 0))).reshape(1,N,M).repeat(M,0).reshape(1,M,N,M).repeat(N,0) - lambda8*C)
+        #new_C = C + gamma3*(numpy.matlib.repmat(er/math.sqrt(np.count_nonzero(Nu > 0)),N,M,1,1) - lambda8*C)
 
         b_u = new_b_u
         b_m = new_b_m
