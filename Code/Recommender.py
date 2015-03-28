@@ -54,7 +54,7 @@ def recommend(rating_file, to_be_rated_file, r, mu, lam):
         new_b_m = b_m + gamma1*(er.sum(axis=0) - lambda6*b_m) 
 
         new_V = V + gamma2*(np.dot(er.T,(U+(Y[Nu>0].sum(axis=0)))) - lambda7*V)
-
+        new_U = U + gamma2*(np.dot(er,V) - lambda7*U)
 
 
 
