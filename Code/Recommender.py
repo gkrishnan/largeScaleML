@@ -62,18 +62,21 @@ def recommend(rating_file, to_be_rated_file, r, mu, lam):
 
         new_C = C + gamma3*(numpy.matlib.repmat(er/math.sqrt(np.count_nonzero(Nu > 0)),N,M,1,1) - lambda8*C)
 
-        
-
-
-
-
-
-        new_U = (1-2*mu*lam)*U + 2*mu*np.dot((np.multiply((R - np.dot(U,V.T)),(R > 0))),V)
-        new_V = (1-2*mu*lam)*V + 2*mu*np.dot((np.multiply((R - np.dot(U,V.T)),(R > 0))).T,U)
-        U = new_U
+        b_u = new_b_u
+        b_m = new_b_m
         V = new_V
+        U = new_U
+        Y = new_Y
+        W = new_W
+        C = new_C
 
-        error2 = np.sum(np.square(np.multiply((np.dot(U,V.T) - R),(R > 0))))
+        baseline1 = global_rating*np.ones((N,M)) + numpy.matlib.repmat(b_u,1,M) + numpy.matlib.repmat(b_i.T,N,1)
+        matrix1 = np.dot((U+((Y[Nu>0].sum(axis=0)) / math.sqrt(np.count_nonzero(Nu > 0)))),V.T)
+        neighbourhood1 = np.dot(np.multiply((R - baseline),(R>0)), W.T) / math.sqrt(np.count_nonzero(R > 0)) + C[Nu>0].sum(axis=0) / math.sqrt(np.count_nonzero(Nu > 0))
+
+        pred_rating1 = baseline1 + matrix1 + neighbourhood1
+
+        error2 = np.sum(np.square(np.multiply((pred_rating1 - R),(R > 0))))
 
         if (error2 > error1):
             print "Error Increased. Cannot coverge to the global minima. Need to stop early."
@@ -83,12 +86,17 @@ def recommend(rating_file, to_be_rated_file, r, mu, lam):
             print "Error became less than the assigned limit"
             break
 
-    new_R = np.dot(U,V.T)
+    new_baseline = global_rating*np.ones((N,M)) + numpy.matlib.repmat(b_u,1,M) + numpy.matlib.repmat(b_i.T,N,1)
+    new_matrix = np.dot((U+((Y[Nu>0].sum(axis=0)) / math.sqrt(np.count_nonzero(Nu > 0)))),V.T)
+    new_neighbourhood = np.dot(np.multiply((R - baseline),(R>0)), W.T) / math.sqrt(np.count_nonzero(R > 0)) + C[Nu>0].sum(axis=0) / math.sqrt(np.count_nonzero(Nu > 0))
+
+    new_pred_rating = new_baseline + new_matrix + new_neighbourhood
+
     f = open(to_be_rated_file,"r")
     fr = open("result.csv", "w")
     for row in f:
         r = row.split(',')  
-        rat = new_R[int(r[0])-1][int(r[1])-1]
+        rat = new_pred_rating[int(r[0])-1][int(r[1])-1]
         print rat
         fr.write(str(rat) + "\n")
     f.close()
