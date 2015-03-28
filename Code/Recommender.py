@@ -40,7 +40,7 @@ def recommend(rating_file, to_be_rated_file, r, mu, lam):
     C = np.random.rand(N,M,N,M)
 
     baseline = global_rating*np.ones((N,M)) + numpy.matlib.repmat(b_u,1,M) + numpy.matlib.repmat(b_i.T,N,1)
-    matrix = np.dot((U+(Y[Nu>0].sum(axis=0))),V.T)
+    matrix = np.dot((U+((Y[Nu>0].sum(axis=0)) / math.sqrt(np.count_nonzero(Nu > 0)))),V.T)
     neighbourhood = np.dot(np.multiply((R - baseline),(R>0)), W.T) / math.sqrt(np.count_nonzero(R > 0)) + C[Nu>0].sum(axis=0)
 
     pred_rating = baseline + matrix + neighbourhood
@@ -53,8 +53,10 @@ def recommend(rating_file, to_be_rated_file, r, mu, lam):
         new_b_u = b_u + gamma1*(er.sum(axis=1) - lambda6*b_u)  
         new_b_m = b_m + gamma1*(er.sum(axis=0) - lambda6*b_m) 
 
-        new_V = V + gamma2*(np.dot(er.T,(U+(Y[Nu>0].sum(axis=0)))) - lambda7*V)
+        new_V = V + gamma2*(np.dot(er.T,(U+((Y[Nu>0].sum(axis=0)) / math.sqrt(np.count_nonzero(Nu > 0))))) - lambda7*V)
         new_U = U + gamma2*(np.dot(er,V) - lambda7*U)
+
+        new_Y = Y + gamma2*(numpy.matlib.repmat(np.dot(er, (V / math.sqrt(np.count_nonzero(Nu > 0)))),N,M,N,r)-lambda7*Y)
 
 
 
