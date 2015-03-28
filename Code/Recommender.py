@@ -42,7 +42,9 @@ def recommend(rating_file, to_be_rated_file, r, mu, lam):
 
     for step in xrange(steps):
         print "Iteration Number: " + str(step)
-        new_b_u = b_u + gamma1*((np.multiply((pred_rating - R),(R > 0))) - lambda6*b_u)   
+        new_b_u = b_u + gamma1*((np.multiply((pred_rating - R),(R > 0))).sum(axis=1) - lambda6*b_u)  
+        new_b_m = b_m + gamma1*((np.multiply((pred_rating - R),(R > 0))).sum(axis=1) - lambda6*b_m) 
+        
 
 
 
