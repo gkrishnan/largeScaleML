@@ -1,0 +1,11 @@
+[0m[[0minfo[0m] [0mPackaging C:\Programming\spark\examples\SimpleApp\target\scala-2.10\simple-project_2.10-1.0.jar ...[0m
+[0m[[0mdebug[0m] [0mInput file mappings:[0m
+[0m[[0mdebug[0m] [0m	SimpleApp$$anonfun$1.class[0m
+[0m[[0mdebug[0m] [0m	  C:\Programming\spark\examples\SimpleApp\target\scala-2.10\classes\SimpleApp$$anonfun$1.class[0m
+[0m[[0mdebug[0m] [0m	SimpleApp$$anonfun$2.class[0m
+[0m[[0mdebug[0m] [0m	  C:\Programming\spark\examples\SimpleApp\target\scala-2.10\classes\SimpleApp$$anonfun$2.class[0m
+[0m[[0mdebug[0m] [0m	SimpleApp$.class[0m
+[0m[[0mdebug[0m] [0m	  C:\Programming\spark\examples\SimpleApp\target\scala-2.10\classes\SimpleApp$.class[0m
+[0m[[0mdebug[0m] [0m	SimpleApp.class[0m
+[0m[[0mdebug[0m] [0m	  C:\Programming\spark\examples\SimpleApp\target\scala-2.10\classes\SimpleApp.class[0m
+[0m[[0minfo[0m] [0mDone packaging.[0m
