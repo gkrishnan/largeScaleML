@@ -1,26 +1,53 @@
 import numpy as np
+import numpy.matlib
 import sys
+import math
 
 def recommend(rating_file, to_be_rated_file, r, mu, lam):
     f = open(rating_file,"r")
     N = 1000
     M = 2069
     R = np.zeros((N,M))
+    Nu = np.zeros((N,M))
+    global_rating = 0.0
+    count = 0
     for row in f:
         re = row.split(',')
         R[int(re[0])-1][int(re[1])-1] = int(re[2])
+        Nu[int(re[0])-1][int(re[1])-1] = 1
+        global_rating += int(re[2])
+        count += 1
     f.close()
+
+    global_rating = global_rating/count
     
     steps = 500
     limit = 10^-5
 
+    b_u = np.random.rand(N,1)
+    b_m = np.random.rand(M,1)
     U = np.random.rand(N,r)
-    V = np.random.rand(M,r) 
+    V = np.random.rand(M,r)     
+    Y = np.random.rand(N,M,N,r)
+    W = np.random.rand(M,M)
+    C = np.random.rand(N,M,N,M)
 
-    error1 = np.sum(np.square(np.multiply((np.dot(U,V.T) - R),(R > 0)))) 
+    baseline = global_rating*np.ones((N,M)) + numpy.matlib.repmat(b_u,1,M) + numpy.matlib.repmat(b_i.T,N,1)
+    matrix = np.dot((U+(Y[Nu>0].sum(axis=0))),V.T)
+    neighbourhood = np.dot(np.multiply((R - baseline),(R>0)), W.T) / math.sqrt(np.count_nonzero(R > 0)) + C[Nu>0].sum(axis=0)
+
+    pred_rating = baseline + matrix + neighbourhood
+
+    error1 = np.sum(np.square(np.multiply((pred_rating - R),(R > 0))))
 
     for step in xrange(steps):
-        print "Iteration Number: " + str(step)      
+        print "Iteration Number: " + str(step)
+        new_b_u = b_u + gamma1*((np.multiply((pred_rating - R),(R > 0))) - lambda6*b_u)   
+
+
+
+
+
         new_U = (1-2*mu*lam)*U + 2*mu*np.dot((np.multiply((R - np.dot(U,V.T)),(R > 0))),V)
         new_V = (1-2*mu*lam)*V + 2*mu*np.dot((np.multiply((R - np.dot(U,V.T)),(R > 0))).T,U)
         U = new_U
