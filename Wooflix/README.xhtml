@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="author" content="Gustavo Narea (http://gustavonarea.net/)" />
+  <title>Readme for Wooflix</title>
+</head>
+<body>
+<h1>Readme for Wooflix</h1>
+<p>
+  <strong>Wooflix</strong> is a <a href="http://python.org">Python</a>-based
+  implementation of a recommender system for the <a 
+  href="http://netflixprize.com">Netflix Prize</a>, based on Yehuda Koren's
+  SVD++ model as published on the paper entitled "<a 
+  href="http://public.research.att.com/~volinsky/netflix/kdd08koren.pdf"
+  >Factorization Meets the Neighborhood: a Multifaceted Collaborative Filtering
+  Model</a>".
+</p>
+
+<p>
+  The <a href="HOWTO.xhtml">HOWTO</a> explains how to install and use Wooflix,
+  and there's is also a <a href="Design.xhtml">software design document</a>
+  included.
+</p>
+
+<p>
+  The <a href="src">/src</a> directory contains the source code for Wooflix,
+  which is available under the terms of the GNU General Public License v3 or
+  later.
+</p>
+
+<p>
+  The software was developed in 11 hours 50 minutes approximately, distributed
+  as follows (approximately too):
+</p>
+
+<ol>
+  <li>6 hours 20 minutes planning the design and writing the design document.</li>
+  <li>5 hours implementing the software in Python.*</li>
+  <li>30 minutes writing the end-users HOWTO.</li>
+</ol>
+
+<p>
+  * It is worth noting that many, many hours were spent waiting for the training
+  to complete (even with a very small sub-set of the entire data set), but they
+  were not included in the time spent writing the software.
+</p>
+
+<p>
+  Another issue that is worth mentioning is that the design document required
+  the system to train the system with 60 factors and 200 epochs, but these
+  numbers had to be decreased notably (to 2 and 3, respectively) in order to 
+  make the system run faster (at least in an usable way).
+</p>
+
+</body>
+</html>

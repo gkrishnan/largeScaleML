@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head lang="en">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="author" content="Gustavo Narea (http://gustavonarea.net/)" />
+  <title>Wooflix HOWTO</title>
+  
+  <style type="text/css">
+    h1, h2 {text-align: center; color: blue; }
+    img {display: block; }
+    code {display: block; color: brown; font-family: monospace; white-space: pre;}
+  </style>
+</head>
+<body>
+
+<h1>How to use Wooflix</h1>
+
+<p>This brief document explains how to install and use Wooflix.</p>
+
+
+<h2>What's Wooflix?</h2>
+
+<p>
+  Wooflix is a recommender system for the <a href="http://netflixprize.com/"
+  >Netflix Prize</a>, based on the <a
+  href="http://public.research.att.com/~volinsky/netflix/kdd08koren.pdf"
+  >SVD++</a> model.
+</p>
+
+<p>
+  To use it, you first need to download the data sets from the contest's
+  Web site.
+</p>
+
+
+<h2>How to install</h2>
+
+<p>
+  Wooflix requires Python 2.5 or newer (it has not been tested on v3.X, though),
+  plus two more libraries (SQLAlchemy and Booleano, which will be downloaded 
+  and installed automatically).
+</p>
+
+<p>
+  To install Wooflix, please <em>cd</em> into the "src" directory and run the
+  following command:
+  
+  <code>
+    python setup.py install
+  </code>
+</p>
+
+<p>
+  This will download and install the dependencies, as well as an script to
+  run Wooflix from the command-line.
+</p>
+
+
+<h2>Using from the command line</h2>
+
+<p>
+  The <em>wooflix</em> command should be available after installing Wooflix.
+  It must always be run from the directory where the Netflix data sets are
+  located. It will allow you to perform three operations on the data:
+</p>
+
+<dl>
+  <dt>Train the system</dt>
+  <dd>
+    <p>
+      To train the system, run the following command:
+      
+      <code>wooflix train</code>
+    </p>
+    <p>
+      For reference, it makes many, many, many hours to run on a computer with
+      a 2.50GHz processor, 4GiB of RAM and a 7200rpm harddisk. Therefore a
+      training mode called "naive" has been added in the last minute; it will
+      basically index just a small sub-set of the dataset and to use it, you
+      have to pass the <em>--naive</em> switch, like this:
+      
+      <code>wooflix train --naive</code>
+    </p>
+  </dd>
+  
+  <dt>Get recommendations</dt>
+  
+  <dd>
+    <p>
+      To get recommendations for a single user, run the following command:
+      
+      <code>wooflix recommendations $USER_ID</code>,
+      
+      where <em>$USER_ID</em> is the identifier for the target user.
+    </p>
+    
+    <p>
+      To limit the output, the <em>--max</em> switch can be used.
+    </p>
+    
+    <p>
+      And to filter the output, using your language (provided you speak Dutch
+      or English) you can be filter the movies recommended thanks to the
+      <em>--filter</em>. You can use it like this to get recommended movies that
+      were published after 1990 and whose title contains the word "car":
+      
+      <code>wooflix recommendations --filter='movie:year &gt; 1990 and "car" is contained in movie:title' $USER_ID</code>
+      
+      or in Dutch:
+      
+      <code>wooflix recommendations --filter='film:jaar &gt; 1990 en "car" is opgenomen in film:titel' --filter-lang=nl $USER_ID</code>
+    </p>
+  </dd>
+  
+  <dt>Rate movies</dt>
+  <dd>
+    <p>Ratings can be registered like this:
+    
+    <code>wooflix rate $USER_ID $MOVIE_ID $RATING_VALUE</code>,
+    
+    where the variables represent the identificator of the user, the identificator
+    of the movie and the rating value, respectively.
+    </p>
+  </dd>
+</dl>
+
+<p>
+  Wooflix indexes all the provided data into a database to ease handling. By
+  default, it is stored in a SQLite database called <em>indexed-dataset.db</em>.
+  The major RDBMS are supported and the database can be changed by passing its
+  URI in the <em>--database</em> switch.  
+</p>
+
+
+<h2>Using the library</h2>
+
+<p>
+  The same operations that can be done via the <em>wooflix</em> command
+  can also be done via Python code, using the Wooflix library whose namespace
+  is <em>wooflix</em> too.
+</p>
+
+<p>
+  The usage is very simple and self-explanatory:
+  
+  <code>
+  from wooflix import Recommender
+  
+  recommender = Recommender("/path/to/netflix/data", "uri:///to/database")
+  </code>
+</p>
+
+<dl>
+  <dt>Training the system</dt>
+  <dd>
+    <p>
+      To do a regular training:
+      
+      <code>recommender.full_training()</code>
+    </p>
+    
+    <p>
+      For a naive training:
+      
+      <code>recommender.naive_training()</code>
+    </p>
+  </dd>
+  
+  <dt>Getting recommendations</dt>
+  <dd>
+    <p>To get recommendations for a particular user, use:
+    
+    <code>recommender.get_random_recommendations(user_id)</code>
+    </p>
+    <p>And to filter such recommendations for a particular user, use:
+    
+    <code>recommender.filter_random_recommendations(user_id, filter)</code>
+    </p>
+    <p>
+      To limit the output, use the <em>limit</em> keyword argument.
+      <em>filter_random_recommendations</em> accepts one more keyword argument,
+      which is the language of the <em>filter</em> (to be used if it's not
+      English).
+    </p>
+  </dd>
+  
+  <dt>Rating movies</dt>
+  <dd>
+    <p>Just use the <em>add_rating</em> method:
+    
+    <code>recommender.add_rating(user_id, movie_id, rating_value)</code>
+    </p>
+    
+    <p>The new rating will be propagated accross the system.</p>
+  </dd>
+</dl>
+
+<h2>About the filters</h2>
+
+<p>
+  The variables available are <em>movie</em> (the movie Id., a short-cut to
+  <em>movie:id</em>), <em>movie:title</em> and <em>movie:average_rating</em>,
+  which are also available in Dutch (thanks to Google Translate).
+</p>
+
+<p>
+  They can be used with the following operators, which are also available in
+  Dutch where applicable:
+</p>
+
+<ul>
+  <li>not</li>
+  <li>and</li>
+  <li>or</li>
+  <li>is (==)</li>
+  <li>is not (!=)</li>
+  <li>&gt;, &lt;, &gt;= and &lt;=</li>
+  <li>is contained in (∈)</li>
+  <li>is sub-set of (⊂)</li>
+</ul>
+
+<p>Parenthesis can be used to organize the expressions better.</p>
+
+<p>
+  This functionality is offered by <a
+  href="http://code.gustavonarea.net/booleano/">Booleano</a>.
+</p>
+
+</body>
+</html>

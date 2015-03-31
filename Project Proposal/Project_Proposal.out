@@ -1,0 +1,15 @@
+\BOOKMARK [1][-]{section.1}{Motivation and Objectives}{}% 1
+\BOOKMARK [1][-]{section.2}{Related Work}{}% 2
+\BOOKMARK [1][-]{section.3}{Proposed Method}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Data Collection}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{User Engagement}{section.3}% 5
+\BOOKMARK [2][-]{subsection.3.3}{Utility Matrix}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.4}{Algorithms for distance metric}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.5}{Vector Distance}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.6}{MapReduce/Hadoop/MRJOB}{section.3}% 9
+\BOOKMARK [2][-]{subsection.3.7}{User Rating Support}{section.3}% 10
+\BOOKMARK [2][-]{subsection.3.8}{Social Network Angle}{section.3}% 11
+\BOOKMARK [2][-]{subsection.3.9}{Flow Diagrams}{section.3}% 12
+\BOOKMARK [1][-]{section.4}{Plan of Action}{}% 13
+\BOOKMARK [1][-]{section.5}{Evaluation and Testing Method}{}% 14
+\BOOKMARK [1][-]{section.6}{Bibliography}{}% 15

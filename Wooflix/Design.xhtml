@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="author" content="Gustavo Narea (http://gustavonarea.net/)" />
+  <title>Wooflix design document</title>
+  
+  <style type="text/css">
+    h1, h2 {text-align: center; color: blue; }
+    img {display: block; }
+  </style>
+</head>
+<body>
+
+<h1>Wooflix design document</h1>
+
+<p>
+  This is a brief software design document for the Wooflix project.
+</p>
+
+<h2>Aim of the project</h2>
+
+<p>
+  The <a href="http://netflixprize.com/">Netflix Prize</a> is a contest to
+  develop a <strong><a href="http://en.wikipedia.org/wiki/Recommender_system"
+  >recommender system</a></strong> whose accuracy, measured with the <a
+  href="http://en.wikipedia.org/wiki/Root_mean_square_deviation">root mean 
+  square deviation</a>, should be of 0.8572 or better (i.e., less than this 
+  value).
+</p>
+
+<p>
+  In this system, <strong>the items to be recommended are movies</strong> and a 
+  training data set is provided, which is made up of over 100,000,000 ratings 
+  from more than 480,000 random users on nearly 18,000 movies. In addition, two 
+  more data sets are provided:
+</p>
+
+<ul>
+  <li>
+    The <strong>qualifying</strong> data set, which contains the ratings whose
+    values must be predicted. For each record, the following data is available:
+    the movie rated, the rater and the date. The actual ratings are not
+    disclosed, so it is not possible to measure the accuracy of these 
+    predictions.
+  </li>
+  <li>
+    The <strong>probe</strong> data set, where each record contains one movie
+    rated and its rater. The missing data from these records are found in the 
+    training data set, since the goal is to measure the accuracy of the system 
+    being developed by comparing its predictions against the actual ratings.
+  </li>
+</ul>
+
+<p>
+  The data sets can be downloaded from <a
+  href="http://www.netflixprize.com/download">netflixprize.com</a> (registration
+  required).
+</p>
+
+<p>
+  <strong>Our mission is to implement a recommender system based on the data
+  sets above</strong>, as well as develop an interface to said system. This
+  interface should, at least, allow users to rate movies and make personalized
+  movie recommendations to users. The system should be implemented with Python
+  (2.5 or newer) in at most 10 hours, counted from the writing of this design
+  document.
+</p>
+
+<h3>Use cases</h3>
+
+<p>
+  The recommender system should support the following operations:
+</p>
+
+<dl>
+  <dt>User gets recommended movies</dt>
+  <dd>
+    <p>
+      A user receives <em>K</em> random movie titles, sorted by the rating the
+      recommender system predicts the user could assign (in descendant order);
+      <em>K</em> defaults to 10.
+    </p>
+  </dd>
+  
+  <dt>User filters the movies recommended</dt>
+  <dd>
+    <p>
+      A user writes a condition in his language, which is interpreted and used
+      to filter the <em>K</em> random movie titles to be recommended, sorted by 
+      the rating the recommender system predicts the user could assign (in 
+      descendant order); <em>K</em> defaults to 10.
+    </p>
+  </dd>
+
+  <dt>User rates a movie</dt>
+  <dd>
+    <p>
+      A user rates a movie he hadn't rated before, with an integer value that
+      ranges from 1 to 5. Upon rating, the system will update the data it
+      computed during training to account for the new rating (the algorithm
+      for this propagation is explained below).
+    </p>
+  </dd>
+</dl>
+
+<h2>Prediction formula to be used by the recommender system</h2>
+
+<p>
+  Several contestants have published papers on models for this recommender
+  system, most notably the team that won the progress prizes (as mandated by the
+  contest rules) in <a 
+  href="http://www.netflixprize.com/assets/ProgressPrize2007_KorBell.pdf">2007</a>
+  and <a href="http://www.netflixprize.com/assets/ProgressPrize2008_BellKor.pdf"
+  >2008</a>, and <a href="http://sifter.org/~simon/journal/20061211.html">Simon
+  Funk</a> (a former contestant who voluntarily explained the algorithm that
+  made him reach for the third place on the contest in late 2006).
+</p>
+
+<p>
+  Although the accuracy of the system is not crucial for our purposes, our 
+  recommender system will be based on the most accurate algorithm known to date:
+  "SVD++" (the winning algorithm in the 2008 progress prize) and explained in
+  more detail in the paper entitled "<a 
+  href="http://public.research.att.com/~volinsky/netflix/kdd08koren.pdf"
+  >Factorization Meets the Neighborhood: a Multifaceted Collaborative Filtering
+  Model</a>". It is available in two versions, a simple one that doesn't take
+  into account temporal effects and a more complex one that does take into
+  account temporal effects; we will use the simple version, whose rating
+  prediction formula is as follows:
+
+  <img src="svd_plus_plus-formula.png" alt="The SVD++ formula" />
+</p>
+
+<p>where,</p>
+
+<dl>
+  <dt>r̂<sub>ui</sub></dt>
+  <dd>
+    <p>
+      The predicted value of rating <em>r<sub>ui</sub></em> (this is, the
+      rating user <em>u</em> gave to movie <em>i</em>).
+    </p>
+  </dd>
+  
+  <dt>b<sub>ui</sub></dt>
+  <dd>
+    <p>
+      The baseline estimates for the user <em>u</em> and movie <em>i</em>, which
+      adjust our prediction by taking into account the tendencies for some users
+      to give higher ratings than others, and for some items to receive higher
+      ratings than others.
+    </p>
+    
+    <p>
+      It is in turn defined as: <em>µ + b<sub>u</sub> + b<sub>i</sub></em>,
+      where <em>µ</em> is the average rating for all the movies, and 
+      <em>b<sub>u</sub></em> and <em>b<sub>i</sub></em> are the observed
+      deviations for user <em>u</em> and movie <em>i</em>, respectively,
+      from the average.
+    </p>
+  </dd>
+  
+  <dt>q<sub>i</sub></dt>
+  <dd>
+    <p>The factors vector for movie <em>i</em>.</p>
+  </dd>
+  
+  <dt>p<sub>u</sub></dt>
+  <dd>
+    <p>The factors vector for user <em>u</em>.</p>
+  </dd>
+  
+  <dt>N(u)</dt>
+  <dd>
+    <p>
+      All the movies for which user <em>u</em> provides an <strong>implicit
+      preference</strong>. In other words, it represents all the movies
+      user <em>u</em> has watched.
+    </p>
+    
+    <p>
+      The data sets we have provide us with a sub-set of such movies: These
+      are the movies user <em>u</em> has rated, even those whose rating given by
+      <em>u</em> is unknown (i.e., the qualifying data set).
+    </p>
+  </dd>
+  
+  <dt>y<sub>j</sub></dt>
+  <dd>
+    <p>The factors vector for movie <em>j</em>.</p>
+  </dd>
+</dl>
+
+<p>
+  A <strong>factors vector</strong> represents the scores for individual
+  factors tracked by the recommender system. If, for example, the system uses
+  2 factors (which don't have to be labeled, what really matters is a consistent
+  order; e.g., "orientation to children" and "level of action"), then each user 
+  and each movie will be assigned a two-component factors vector. A user-factors 
+  vector represents how much that user likes (or dislikes) each factor, while a 
+  movie-factors vector represents how much that movie has of each factor.
+</p>
+
+<p>
+  User- and movie-factors vectors are key in the prediction, since the
+  SVD++ formula links the features offered by a movie with the preferences of
+  the user on each of those features. As a consequence, the more factors the
+  system uses, the more accurate the prediction can be.
+</p>
+
+<h3>Training the system</h3>
+
+<p>
+  All the terms in our prediction formula can be computed with relative ease,
+  except for our factors vectors which require more advanced computational
+  procedures: We need to compute two matrices (one for all users factors and 
+  another for all movies factors) by iterating over all the records
+  in the training data set multiple times, so the system can learn from previous
+  inaccurate predictions and thus improve the values of the factors vectors
+  on every iteration. Each iteration is often referred to as "epoch" and the
+  whole process is known as "training"; and the more you train the
+  system, the more accurate the factor matrices will be.
+</p>
+
+<p>
+  To train the system, we will use 60 factors and 200 epochs (iterations on
+  each factor), where each factor has a default value of 0.0001.
+</p>
+
+<p>
+  On the other hand, the SVD++ prediction formula depends on all the records of
+  our big data sets (it uses the average of some values), so it wouldn't 
+  be efficient to compute it all over. So we are going to take advantage of the 
+  training mechanism to cache the following:
+</p>
+
+<ul>
+  <li>
+    The average rating for all the movies in the (training) data set (<em>µ</em>).
+  </li>
+  <li>
+    For each user: Bias (<em>b<sub>u</sub></em>), factors vector 
+    (<em>p<sub>u</sub></em>) and the identifiers for all the movies in the
+    implicit preferences (<em>N(u)</em>).
+  </li>
+  <li>
+    For each movie: Bias (<em>b<sub>i</sub></em>) and factors vector 
+    (<em>q<sub>i</sub></em>).
+  </li>
+</ul>
+
+<p>
+  The first should be stored in a single file, while the rest should be indexed
+  in a database to ease handling (powered by SQLite, since its support is
+  built-in as of Python 2.5). The movie titles should also be indexed in the
+  database, to they can be retrieved easier.
+</p>
+
+<p>
+  The following flowchart describes the training algorithm:
+  
+  <img src="Training.png" />
+</p>
+
+<h4>Post-rating training</h4>
+
+<p>
+  When a rating is made, the users' and movies' factor matrices and biases
+  should be updated, as well as the average rating for all the movies, in order
+  to improve the accuracy of the predictions as new ratings are received:
+  
+  <img src="PostRatingTraining.png" />
+</p>
+
+<h2>Data model</h2>
+
+<p>
+  An appropriate data model for the recommender system described above can be:
+  
+  <img src="IndexedData.png" />
+</p>
+
+<h2>Assumptions</h2>
+
+<p>
+  During the design of the recommender system, the following assumptions were
+  made:
+</p>
+
+<ol>
+  <li>
+    <p>
+      It is not mandatory to recommend only those movies with the highest
+      predicted ratings. It would have been necessary to analyze all the records
+      in the data set whenever recommendations were requested, and then order 
+      it and finally limit the output to <em>L</em> movies.
+    </p>
+    <p>
+      The complexity of the system would have been considerably higher, not
+      because of the loop on the data set to predict the ratings, but because
+      an efficient sorting algorithm would have been implemented, which is
+      not possible due to time constraints; otherwise, I would have used <a 
+      href="http://en.wikipedia.org/wiki/Heapsort">Heapsort</a>, because of the
+      size of the data to be sorted and all the values are disorganized. Another
+      problem would have been performance.
+    </p>
+    <p>
+      This is why the random approach was taken: It is easier to implement and
+      runs much faster.
+    </p>
+  </li>
+  
+  <li>
+    <p>
+      It is okay to use Booleano because it's only used for an small/additional
+      feature. It is not used for anything requested in the assignment.
+    </p>
+  </li>
+  
+  <li>
+    <p>
+      It is fine to index the relevant data into a database and use an ORM
+      (i.e., SQLAlchemy). This makes it faster to handle data and also more
+      pleasant than reading and writing text files, and allows the developer to
+      focus on more important tasks.
+    </p>
+  </li>
+  
+  <li>
+    <p>
+      User input does not have to be validated or sanitized. Bad input will
+      raise exceptions that the user will see.
+    </p>
+  </li>
+</ol>
+
+</body>
+</html>
