@@ -23,7 +23,9 @@ def recommend(rating_file, to_be_rated_file): #, r, mu, lam):
     #print "File Read"
 
     global_rating = global_rating/count
-    
+    b_u = (np.nan_to_num(R.sum(1)/(R != 0).sum(1))).reshape(N,1) - global_rating*np.ones((N,1))
+    b_m = (np.nan_to_num(R.sum(0)/(R != 0).sum(0))).reshape(M,1) - global_rating*np.ones((M,1))
+
     steps = 5
     limit = 10^-5
 
@@ -37,13 +39,13 @@ def recommend(rating_file, to_be_rated_file): #, r, mu, lam):
 
     #print "Parameters Done"
 
-    b_u = np.random.rand(N,1)
-    b_m = np.random.rand(M,1)
+    #b_u = np.random.rand(N,1)
+    #b_m = np.random.rand(M,1)
     U = np.random.rand(N,r)
     V = np.random.rand(M,r)     
-    #Y = np.random.rand(N,M,N,r)
+    Y = np.random.rand(N,M)
     W = np.random.rand(M,M)
-    #C = np.random.rand(N,M,N,M)
+    C = np.random.rand(N,M)
 
     #print "Parameters Done"
 
@@ -52,6 +54,8 @@ def recommend(rating_file, to_be_rated_file): #, r, mu, lam):
     #print "Baseline"
     #print b_u.shape
     #print b_m.shape
+
+    
 
     #matrix = np.dot(U,V.T)
     #matrix = np.dot((U+((Y[Nu>0].sum(axis=0)) / math.sqrt(np.count_nonzero(Nu > 0)))),V.T)
