@@ -3,7 +3,7 @@ import numpy.matlib
 import sys
 import math
 
-def recommend(rating_file, to_be_rated_file): #, r, mu, lam):
+def recommend(rating_file, to_be_rated_file):
     f = open(rating_file,"r")
     N = 1000
     M = 2069
@@ -43,13 +43,15 @@ def recommend(rating_file, to_be_rated_file): #, r, mu, lam):
     V = np.random.rand(M,r)
     W = np.random.rand(M,M)
 
-    Y = np.random.rand(M,r)
-    C = np.random.rand(M,M)
+    #Y = np.random.rand(M,r)
+    #C = np.random.rand(M,M)
+    #C = (C + C.T) / 2
 
     baseline = global_rating*np.ones((N,M)) + numpy.matlib.repmat(b_u,1,M) + numpy.matlib.repmat(b_m.T,N,1)
-    #matrix = np.dot(U,V.T)
     matrix = np.dot(U,V.T)
+    #matrix = np.dot((U + numpy.matlib.repmat((((np.dot(Nu,Y)).sum(0)).reshape(r,1)).T,N,1) / math.sqrt(np.count_nonzero(Nu > 0)) ),V.T)
     neighbourhood = np.dot(np.multiply((R - baseline),(R>0)), W.T) / math.sqrt(np.count_nonzero(R > 0))
+    #neighbourhood = np.dot(np.multiply((R - baseline),(R>0)), W.T) / math.sqrt(np.count_nonzero(R > 0)) + (np.dot(C,Nu.T)).T  / math.sqrt(np.count_nonzero(Nu > 0))
 
     pred_rating = baseline + matrix + neighbourhood
 
@@ -66,7 +68,11 @@ def recommend(rating_file, to_be_rated_file): #, r, mu, lam):
         new_b_m = b_m + 2*gamma1*(((er).sum(axis=0)).reshape(M,1) - lambda6*np.multiply(((R>0).sum(0)).reshape(M,1),b_m))
         new_U = (1-2*gamma2*lambda7)*U + 2*gamma2*np.dot((er),V)
         new_V = (1-2*gamma2*lambda7)*V + 2*gamma2*np.dot((er).T,U)
+        #new_V = (1-2*gamma2*lambda7)*V + 2*gamma2*np.dot((er).T, U + numpy.matlib.repmat((((np.dot(Nu,Y)).sum(0)).reshape(r,1)).T,N,1) / math.sqrt(np.count_nonzero(Nu > 0)) )
         new_W = W + 2*gamma3*(np.dot((er).T,np.multiply((R - baseline),(R>0))) / math.sqrt(np.count_nonzero(R > 0)) - lambda8*W)
+
+        #new_Y = Y + 2*gamma2*( np.dot(numpy.matlib.repmat((er.sum(0)).reshape(M,1),1,M),V) - lambda7*Y)
+        #new_C = C + 2*gamma3*( numpy.matlib.repmat((er.sum(0)).reshape(M,1),1,M) - lambda8*C)
 
         b_u = new_b_u
         b_m = new_b_m
@@ -74,9 +80,15 @@ def recommend(rating_file, to_be_rated_file): #, r, mu, lam):
         U = new_U
         W = new_W
 
+        #Y = new_Y
+        #C = new_C
+
         baseline = global_rating*np.ones((N,M)) + numpy.matlib.repmat(b_u,1,M) + numpy.matlib.repmat(b_m.T,N,1)
         matrix = np.dot(U,V.T)
         neighbourhood = np.dot(np.multiply((R - baseline),(R>0)), W.T) / math.sqrt(np.count_nonzero(R > 0))
+        #matrix = np.dot((U + numpy.matlib.repmat((((np.dot(Nu,Y)).sum(0)).reshape(r,1)).T,N,1) / math.sqrt(np.count_nonzero(Nu > 0)) ),V.T)
+        #neighbourhood = np.dot(np.multiply((R - baseline),(R>0)), W.T) / math.sqrt(np.count_nonzero(R > 0)) + (np.dot(C,Nu.T)).T  / math.sqrt(np.count_nonzero(Nu > 0))
+
 
         pred_rating = baseline + neighbourhood + matrix
 
@@ -84,9 +96,9 @@ def recommend(rating_file, to_be_rated_file): #, r, mu, lam):
 
         print error2
 
-        if (error2 > error1):
+        '''if (error2 > error1):
             print "Error Increased. Cannot coverge to the global minima. Need to stop early."
-            break
+            break'''
 
         if error2 < limit:
             print "Error became less than the assigned limit"
@@ -97,6 +109,9 @@ def recommend(rating_file, to_be_rated_file): #, r, mu, lam):
     baseline = global_rating*np.ones((N,M)) + numpy.matlib.repmat(b_u,1,M) + numpy.matlib.repmat(b_m.T,N,1)
     matrix = np.dot(U,V.T)
     neighbourhood = np.dot(np.multiply((R - baseline),(R>0)), W.T) / math.sqrt(np.count_nonzero(R > 0))
+
+    #matrix = np.dot((U + numpy.matlib.repmat((((np.dot(Nu,Y)).sum(0)).reshape(r,1)).T,N,1) / math.sqrt(np.count_nonzero(Nu > 0)) ),V.T)
+    #neighbourhood = np.dot(np.multiply((R - baseline),(R>0)), W.T) / math.sqrt(np.count_nonzero(R > 0)) + (np.dot(C,Nu.T)).T  / math.sqrt(np.count_nonzero(Nu > 0))
 
     pred_rating = baseline + matrix + neighbourhood
 
