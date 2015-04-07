@@ -20,7 +20,7 @@ def recommend(rating_file, r, mu, lam, D):
 
     N = 1000
     M = 2069
-    steps = 5
+    steps = 1500
     limit = 10^-5
 
     gamma1 = mu
