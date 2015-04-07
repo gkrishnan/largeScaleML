@@ -20,7 +20,7 @@ def recommend(rating_file, r, mu, lam, D):
 
     N = 1000
     M = 2069
-    steps = 1000
+    steps = 5
     limit = 10^-5
 
     gamma1 = mu
@@ -120,25 +120,26 @@ def recommend(rating_file, r, mu, lam, D):
         testRMSE = LA.norm(np.multiply((test_matrix - pred_rating), (test_matrix > 0))) / math.sqrt(np.count_nonzero(test_matrix > 0))
 
         rmse_l.append(testRMSE)
+        fo.write("Cross-Validation Step " + str(counter) + ":\t" + str(testRMSE) + "\n")
         print "Cross-Validation Step " + str(counter) + ":\t" + str(testRMSE)
         counter += 1
 
     rmse_avg = sum(rmse_l) / float(len(rmse_l))
     print "\nAverage RMSE: " + str(rmse_avg)
-    #return rmse_avg
+    return rmse_avg
 
-rank = [1,3,5,50,100,150,200,350,300]
-learn = [0.00001, 0.0001, 0.0005, 0.001]
-reg = [0.005, 0.05, 0.1, 0.5]
+rank = [1,3,5,50,100,150,200,250,300]
+learn = [0.00001, 0.00005, 0.0001, 0.0005, 0.001]
+reg = [0.005, 0.01, 0.05, 0.1, 0.5]
 
 fo = open("results_CV.txt", "w")
 for i in rank:
     for j in learn:
         for l in reg:
-            fo.write(str(i) + "\t" + str(j) + "\t" + str(l) + "\t")
+            fo.write(str(i) + "\t" + str(j) + "\t" + str(l) + "\n")
             print str(i) + "\t" + str(j) + "\t" + str(l)
             rmse = recommend("ratings.csv",i,j,l,10)
-            fo.write(str(rmse) + "\n")
+            fo.write("Average RMSE: " + str(rmse) + "\n\n")
 
 fo.close()
 
