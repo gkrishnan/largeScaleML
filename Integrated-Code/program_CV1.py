@@ -128,9 +128,9 @@ def recommend(rating_file, r, mu, lam, D):
     print "\nAverage RMSE: " + str(rmse_avg)
     return rmse_avg
 
-rank = [50,100,300]
-learn = [0.00001, 0.0001]
-reg = [0.005, 0.05]
+rank = [1,50,100,200,300]
+learn = [0.00005]
+reg = [0.01]
 
 fo = open("results_CV.txt", "w")
 for i in rank:
