@@ -20,7 +20,7 @@ def recommend(rating_file, r, mu, lam, D):
 
     N = 1000
     M = 2069
-    steps = 1000
+    steps = 1500
     limit = 10^-5
 
     gamma1 = mu
@@ -128,9 +128,13 @@ def recommend(rating_file, r, mu, lam, D):
     print "\nAverage RMSE: " + str(rmse_avg)
     return rmse_avg
 
-rank = [50,100,300]
+'''rank = [50,100,300]
 learn = [0.00001, 0.0001]
-reg = [0.005, 0.05]
+reg = [0.005, 0.05]'''
+
+rank = [1]
+learn = [0.00001]
+reg = [0.005]
 
 fo = open("results_CV.txt", "w")
 for i in rank:

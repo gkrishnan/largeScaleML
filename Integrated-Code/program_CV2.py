@@ -132,11 +132,11 @@ def recommend(rating_file, r, mu, lam, D):
 learn = [0.00001, 0.0001]
 reg = [0.005, 0.05]'''
 
-rank = [3]
+rank = [5]
 learn = [0.00001]
 reg = [0.005]
 
-fo = open("results_CV1.txt", "w")
+fo = open("results_CV2.txt", "w")
 for i in rank:
     for j in learn:
         for l in reg:
