@@ -28,7 +28,7 @@ def recommend(rating_file, to_be_rated_file):
     b_m[np.isnan(b_m)] = 0
     b_m[np.isinf(b_m)] = 0
 
-    steps = 500
+    steps = 1500
     limit = 10^-5
 
     gamma1 = 0.00001

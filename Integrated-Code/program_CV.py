@@ -132,7 +132,7 @@ def recommend(rating_file, r, mu, lam, D):
 learn = [0.00001, 0.0001]
 reg = [0.005, 0.05]'''
 
-rank = [1]
+rank = [300]
 learn = [0.00001]
 reg = [0.005]
 
