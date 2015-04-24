@@ -3,7 +3,7 @@ import numpy.matlib
 import sys
 import math
 
-def recommend(rating_file, to_be_rated_file):
+def recommend(rating_file, to_be_rated_file, r, mu, lam):
     f = open(rating_file,"r")
     N = 1000
     M = 2069
@@ -31,13 +31,12 @@ def recommend(rating_file, to_be_rated_file):
     steps = 1500
     limit = 10^-5
 
-    gamma1 = 0.00001
-    gamma2 = 0.00001
-    gamma3 = 0.00001
-    lambda6 = 0.005
-    lambda7 = 0.005
-    lambda8 = 0.005
-    r = 300
+    gamma1 = mu
+    gamma2 = mu
+    gamma3 = mu
+    lambda6 = lam
+    lambda7 = lam
+    lambda8 = lam
 
     U = np.random.rand(N,r)
     V = np.random.rand(M,r)
@@ -57,7 +56,7 @@ def recommend(rating_file, to_be_rated_file):
 
     error1 = np.sum(np.square(np.multiply((R - pred_rating),(R > 0))))
 
-    print error1
+    #print error1
 
     for step in range(steps):
         print "Iteration Number: " + str(step)
@@ -94,7 +93,7 @@ def recommend(rating_file, to_be_rated_file):
 
         error2 = np.sum(np.square(np.multiply((R - pred_rating),(R > 0))))
 
-        print error2
+        #print error2
 
         '''if (error2 > error1):
             print "Error Increased. Cannot coverge to the global minima. Need to stop early."
@@ -104,7 +103,7 @@ def recommend(rating_file, to_be_rated_file):
             print "Error became less than the assigned limit"
             break
 
-    print "out of loop"
+    #print "out of loop"
 
     baseline = global_rating*np.ones((N,M)) + numpy.matlib.repmat(b_u,1,M) + numpy.matlib.repmat(b_m.T,N,1)
     matrix = np.dot(U,V.T)
@@ -115,7 +114,7 @@ def recommend(rating_file, to_be_rated_file):
 
     pred_rating = baseline + matrix + neighbourhood
 
-    raw_input()
+    #raw_input()
 
     f = open(to_be_rated_file,"r")
     fr = open("result.csv", "w")
@@ -127,4 +126,11 @@ def recommend(rating_file, to_be_rated_file):
     f.close()
     fr.close()
 
-recommend("ratings.csv", "toBeRated.csv")
+#recommend("ratings.csv", "toBeRated.csv")
+if len(sys.argv) != 6:
+    print "Not Enough Arguments"
+    print "Format: integrated_model.py <filename for set of training ratings> <filename for set of testing ratings> <number of latent factors> <learning rate> <regularization parameter>"
+    print "For eg: python -W ignore integrated_model.py ratings.csv toBeRated.csv 3 0.00001 0.05"
+    exit()
+
+recommend(sys.argv[1], sys.argv[2], int(sys.argv[3]), float(sys.argv[4]), float(sys.argv[5]))

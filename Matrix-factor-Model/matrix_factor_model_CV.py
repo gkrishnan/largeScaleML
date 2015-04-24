@@ -89,6 +89,8 @@ fo.close()'''
 
 if len(sys.argv) != 6:
     print "Not Enough Arguments"
+    print "Format: matrix_factor_model_CV.py <filename for set of training ratings> <number of latent factors> <learning rate> <regularization parameter> <number of folds>"
+    print "For eg: python matrix_factor_model_CV.py ratings.csv 3 0.0001 0.05 10"
     exit()
 
 recommend(sys.argv[1], int(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4]), int(sys.argv[5]))

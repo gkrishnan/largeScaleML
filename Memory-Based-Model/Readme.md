@@ -1,7 +1,7 @@
 Readme
 ———————
 
-I have written three codes, one for user-based collaborative filtering, second for item-based collaborative filtering and the third for hybrid-based collaborative filtering.
+We have written three codes, one for user-based collaborative filtering, second for item-based collaborative filtering and the third for hybrid-based collaborative filtering.
 
 First, move to the folder and copy the files ratings.csv, toBeRated.csv, users.csv, and movies.csv to the downloaded “Code” folder. Now, enter the commands explained as follows:
 

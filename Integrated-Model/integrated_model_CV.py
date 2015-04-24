@@ -6,8 +6,8 @@ import math
 import sys
 
 def recommend(rating_file, r, mu, lam, D):
-    #print "Recommender System - Cross Validation: \nr = " + str(r) + "\nmu = " + str(mu) + "\nlam = " + str(lam) + "\nNumber of Folds = " + str(D) + "\n" 
-    #print "If Number of Folds given is 10, then Complete Program will take about 10-15 mins to finish. So be Patient.... :) \n"
+    print "Recommender System - Cross Validation: \nr = " + str(r) + "\nmu = " + str(mu) + "\nlam = " + str(lam) + "\nNumber of Folds = " + str(D) + "\n" 
+    print "Complete Program will take a lot of time to finish. So be Patient.... :) \n"
     f = open(rating_file,"r")
     data = []
     for row in f:
@@ -110,17 +110,17 @@ def recommend(rating_file, r, mu, lam, D):
             #print error2
 
             if (error2 > error1):
-                #print "Error Increased. Cannot coverge to the global minima. Need to stop early."
+                print "Error Increased. Cannot coverge to the global minima. Need to stop early."
                 break
 
             if error2 < limit:
-                #print "Error became less than the assigned limit"
+                print "Error became less than the assigned limit"
                 break
 
         testRMSE = LA.norm(np.multiply((test_matrix - pred_rating), (test_matrix > 0))) / math.sqrt(np.count_nonzero(test_matrix > 0))
 
         rmse_l.append(testRMSE)
-        fo.write("Cross-Validation Step " + str(counter) + ":\t" + str(testRMSE) + "\n")
+        #fo.write("Cross-Validation Step " + str(counter) + ":\t" + str(testRMSE) + "\n")
         print "Cross-Validation Step " + str(counter) + ":\t" + str(testRMSE)
         counter += 1
 
@@ -130,7 +130,7 @@ def recommend(rating_file, r, mu, lam, D):
 
 '''rank = [50,100,300]
 learn = [0.00001, 0.0001]
-reg = [0.005, 0.05]'''
+reg = [0.005, 0.05]
 
 rank = [1]
 learn = [0.00001]
@@ -145,12 +145,14 @@ for i in rank:
             rmse = recommend("ratings.csv",i,j,l,10)
             fo.write("Average RMSE: " + str(rmse) + "\n\n")
 
-fo.close()
+fo.close()'''
 
-'''if len(sys.argv) != 6:
+if len(sys.argv) != 6:
     print "Not Enough Arguments"
+    print "Format: integrated_model_CV.py <filename for set of training ratings> <number of latent factors> <learning rate> <regularization parameter> <number of folds>"
+    print "For eg: python -W ignore integrated_model_CV.py ratings.csv 3 0.00001 0.05 10"
     exit()
 
-recommend(sys.argv[1], int(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4]), int(sys.argv[5]))'''
+recommend(sys.argv[1], int(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4]), int(sys.argv[5]))
 
 

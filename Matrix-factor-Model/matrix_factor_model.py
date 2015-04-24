@@ -50,6 +50,8 @@ def recommend(rating_file, to_be_rated_file, r, mu, lam):
 #recommend("ratings.csv", "toBeRated.csv",3, 0.0001, 0.05)
 if len(sys.argv) != 6:
     print "Not Enough Arguments"
+    print "Format: matrix_factor_model.py <filename for set of training ratings> <filename for set of testing ratings> <number of latent factors> <learning rate> <regularization parameter>"
+    print "For eg: python matrix_factor_model.py ratings.csv toBeRated.csv 3 0.0001 0.05"
     exit()
 
 recommend(sys.argv[1], sys.argv[2], int(sys.argv[3]), float(sys.argv[4]), float(sys.argv[5]))
