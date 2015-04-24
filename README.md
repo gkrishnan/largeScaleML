@@ -18,4 +18,8 @@ Recommender Systems Implemented:
 	- Hybrid Based
 
 4. Spark
-.... to be written by Parminder and Gopi
+	-SVD
+	-SVD++
+	-Alternating Least Squares
+5. Evaluation of Hadoop Family
+	-Compare performance of Hadoop, Hive on single node and 5 node clusters
